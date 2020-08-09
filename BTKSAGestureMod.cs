@@ -6,11 +6,11 @@ namespace BTKSAGestureMod
 {
     public static class BuildInfo
     {
-        public const string Name = "BTKSAGestureMod"; // Name of the Mod.  (MUST BE SET)
-        public const string Author = "DDAkebono#0001"; // Author of the Mod.  (Set as null if none)
-        public const string Company = "BTK-Development"; // Company that made the Mod.  (Set as null if none)
-        public const string Version = "1.0.0"; // Version of the Mod.  (MUST BE SET)
-        public const string DownloadLink = "https://github.com/ddakebono/BTKSAGestureMod/releases"; // Download Link for the Mod.  (Set as null if none)
+        public const string Name = "BTKSAGestureMod";
+        public const string Author = "DDAkebono#0001";
+        public const string Company = "BTK-Development";
+        public const string Version = "1.0.0";
+        public const string DownloadLink = "https://github.com/ddakebono/BTKSAGestureMod/releases";
     }
 
     public class BTKSAGestureMod : MelonMod
