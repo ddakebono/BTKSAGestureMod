@@ -10,8 +10,6 @@ Install [MelonLoader](https://github.com/HerpDerpinstine/MelonLoader) version 0.
 
 Download the latest release from [Releases](https://github.com/ddakebono/BTKSAGestureMod/releases) and place in your VRChat\Mods folder.
 
-The mod will initially only be fixing the nameplate position, but you can enable the hidden custom nameplate feature in the UIExpanionKit settings menu.
-
 ## Disclamer
 **Warning:** The VRChat team is not very keen on modding or reverse engineering the game, while the mod does not include anything that would ruin the fun for others, using it may still be a bannable offence.
 
