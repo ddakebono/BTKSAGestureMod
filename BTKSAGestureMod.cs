@@ -1,5 +1,6 @@
 ﻿using Harmony;
 using MelonLoader;
+using System.IO;
 using System.Reflection;
 
 namespace BTKSAGestureMod
@@ -22,6 +23,8 @@ namespace BTKSAGestureMod
         public static string settingsCategory = "BTKSAGestureMod";
         public static string rightHandSetting = "righthand";
         public static string leftHandSetting = "lefthand";
+        public static string leftHandActionDisable = "lefthandactiondisable";
+        public static string rightHandActionDisable = "righthandactiondisable";
 
         public override void VRChat_OnUiManagerInit()
         {
@@ -29,15 +32,31 @@ namespace BTKSAGestureMod
 
             instance = this;
 
+            if (Directory.Exists("BTKCompanion"))
+            {
+                MelonLogger.Log("Woah, hold on a sec, it seems you might be running BTKCompanion, if this is true GestureMod is built into that, and you should not be using this!");
+                MelonLogger.Log("If you are not currently using BTKCompanion please remove the BTKCompanion folder from your VRChat installation!");
+                MelonLogger.LogError("Gesture Mod has not started up! (BTKCompanion Exists)");
+                return;
+            }
+
             MelonPrefs.RegisterCategory(settingsCategory, "Gesture Mod");
             MelonPrefs.RegisterBool(settingsCategory, rightHandSetting, false, "Replace Right Hand Action Menu");
             MelonPrefs.RegisterBool(settingsCategory, leftHandSetting, false, "Replace Left Hand Action Menu");
+            MelonPrefs.RegisterBool(settingsCategory, rightHandActionDisable, false, "Disable Right Action Menu");
+            MelonPrefs.RegisterBool(settingsCategory, leftHandActionDisable, false, "Disable Left Action Menu");
 
-
-            //Initalize Harmony
-            harmony = HarmonyInstance.Create("BTKStandalone");
-            //OpenActionMenu - Takes bool for open or close?
-            harmony.Patch(typeof(ActionMenuOpener).GetMethod("Method_Public_Void_Boolean_2", BindingFlags.Public | BindingFlags.Instance), new HarmonyMethod(typeof(BTKSAGestureMod).GetMethod("OnActionMenuOpen", BindingFlags.Static | BindingFlags.Public)));
+            if (VRCTrackingManager.Method_Public_Static_Boolean_9())
+            {
+                //Initalize Harmony
+                harmony = HarmonyInstance.Create("BTKStandalone");
+                //OpenActionMenu - Takes bool for open or close?
+                harmony.Patch(typeof(ActionMenuOpener).GetMethod("Method_Public_Void_Boolean_2", BindingFlags.Public | BindingFlags.Instance), new HarmonyMethod(typeof(BTKSAGestureMod).GetMethod("OnActionMenuOpen", BindingFlags.Static | BindingFlags.Public)));
+            }
+            else
+            {
+                MelonLogger.Log("Desktop Mode Detected, Gesture Mod has not started up!");
+            }
 
 
         }
@@ -63,6 +82,10 @@ namespace BTKSAGestureMod
                 return false; //Skip original function
 
             }
+
+            //Check if action menu is disabled for hand
+            if ((MelonPrefs.GetBool(settingsCategory, rightHandActionDisable) && __instance.name.Equals("MenuR")) || (MelonPrefs.GetBool(settingsCategory, leftHandActionDisable) && __instance.name.Equals("MenuL")))
+                return false;
 
             return true;
         }
