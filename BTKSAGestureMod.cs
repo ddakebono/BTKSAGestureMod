@@ -10,7 +10,7 @@ namespace BTKSAGestureMod
         public const string Name = "BTKSAGestureMod";
         public const string Author = "DDAkebono#0001";
         public const string Company = "BTK-Development";
-        public const string Version = "1.0.0";
+        public const string Version = "1.1.0";
         public const string DownloadLink = "https://github.com/ddakebono/BTKSAGestureMod/releases";
     }
 
@@ -46,10 +46,11 @@ namespace BTKSAGestureMod
             MelonPrefs.RegisterBool(settingsCategory, rightHandActionDisable, false, "Disable Right Action Menu");
             MelonPrefs.RegisterBool(settingsCategory, leftHandActionDisable, false, "Disable Left Action Menu");
 
-            if (VRCTrackingManager.Method_Public_Static_Boolean_9())
+            //Only initialize for VR users
+            if (!VRCTrackingManager.prop_Boolean_0)
             {
                 //Initalize Harmony
-                harmony = HarmonyInstance.Create("BTKStandalone");
+                harmony = HarmonyInstance.Create("BTKStandaloneGM");
                 //OpenActionMenu - Takes bool for open or close?
                 harmony.Patch(typeof(ActionMenuOpener).GetMethod("Method_Public_Void_Boolean_2", BindingFlags.Public | BindingFlags.Instance), new HarmonyMethod(typeof(BTKSAGestureMod).GetMethod("OnActionMenuOpen", BindingFlags.Static | BindingFlags.Public)));
             }
@@ -57,8 +58,6 @@ namespace BTKSAGestureMod
             {
                 MelonLogger.Log("Desktop Mode Detected, Gesture Mod has not started up!");
             }
-
-
         }
         /// <summary>
         /// This function will handle the main override of the ActionMenuOpener object according

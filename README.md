@@ -1,7 +1,14 @@
 # BTKSAGestureMod
 BTK Standalone: Gesture Mod is a small mod to allow you to switch the ActionMenu button binds back into the Gesture Lock, like how it worked originally on the Index controllers.
 
-The mod has 2 settings that are controlled via [UIExpanionKit](https://github.com/knah/VRCMods), by default neither right or left are overriden, you can choose either, one, both, or none by setting them in UIExpanionKit.
+When the mod detects that you're in Desktop Mode it will disable any overrides.
+
+The mod has 4 settings that are controlled via [UIExpanionKit](https://github.com/knah/VRCMods)
+
+1. Replace Right Hand Action Menu - Replaces the Right Hand Action Menu with the quick Gesture Lock toggle
+2. Replace Left Hand Action Menu - Replaces the Left Hand Action Menu with the quick Gesture Lock toggle
+3. Disable Right Action Menu - This disables the Right Action Menu on both the main bound button and the long press menu
+4. Disable Left Action Menu - This disables the Left Action Menu on both the main bound button and the long press menu
 
 If you encounter issues with this mod, feel free to contact me on Discord (DDAkebono#0001)!
 
