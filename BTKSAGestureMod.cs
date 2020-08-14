@@ -11,7 +11,7 @@ namespace BTKSAGestureMod
         public const string Name = "BTKSAGestureMod";
         public const string Author = "DDAkebono#0001";
         public const string Company = "BTK-Development";
-        public const string Version = "1.1.1";
+        public const string Version = "1.1.2";
         public const string DownloadLink = "https://github.com/ddakebono/BTKSAGestureMod/releases";
     }
 
@@ -52,14 +52,23 @@ namespace BTKSAGestureMod
             {
                 //Initalize Harmony
                 harmony = HarmonyInstance.Create("BTKStandaloneGM");
-                //OpenActionMenu - Takes bool for open or close?
-                harmony.Patch(typeof(ActionMenuOpener).GetMethod("Method_Public_Void_Boolean_2", BindingFlags.Public | BindingFlags.Instance), new HarmonyMethod(typeof(BTKSAGestureMod).GetMethod("OnActionMenuOpen", BindingFlags.Static | BindingFlags.Public)));
+
+                //Setup hooks on matching methods in ActionMenuOpener
+                foreach(MethodInfo method in typeof(ActionMenuOpener).GetMethods(BindingFlags.Public | BindingFlags.Instance))
+                {
+                    if (method.Name.Contains("Method_Public_Void_Boolean"))
+                    {
+                        //MelonLogger.Log($"Found method to patch {method.Name}");
+                        harmony.Patch(method, new HarmonyMethod(typeof(BTKSAGestureMod).GetMethod("OnActionMenuOpen", BindingFlags.Static | BindingFlags.Public)));
+                    }
+                }
             }
             else
             {
                 MelonLogger.Log("Desktop Mode Detected, Gesture Mod has not started up!");
             }
         }
+
         /// <summary>
         /// This function will handle the main override of the ActionMenuOpener object according
         /// to the configuration supplied by MelonPrefs
