@@ -50,6 +50,8 @@ namespace BTKSAGestureMod
             //Only initialize for VR users
             if (XRDevice.isPresent)
             {
+                int patchCount = 0;
+
                 //Initalize Harmony
                 harmony = HarmonyInstance.Create("BTKStandaloneGM");
 
@@ -59,9 +61,12 @@ namespace BTKSAGestureMod
                     if (method.Name.Contains("Method_Public_Void_Boolean"))
                     {
                         //MelonLogger.Log($"Found method to patch {method.Name}");
+                        patchCount++;
                         harmony.Patch(method, new HarmonyMethod(typeof(BTKSAGestureMod).GetMethod("OnActionMenuOpen", BindingFlags.Static | BindingFlags.Public)));
                     }
                 }
+
+                MelonLogger.Log($"Found {patchCount} matching methods in ActionMenuOpener.");
             }
             else
             {
