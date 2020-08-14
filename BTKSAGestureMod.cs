@@ -2,6 +2,7 @@
 using MelonLoader;
 using System.IO;
 using System.Reflection;
+using UnityEngine.XR;
 
 namespace BTKSAGestureMod
 {
@@ -10,7 +11,7 @@ namespace BTKSAGestureMod
         public const string Name = "BTKSAGestureMod";
         public const string Author = "DDAkebono#0001";
         public const string Company = "BTK-Development";
-        public const string Version = "1.1.0";
+        public const string Version = "1.1.1";
         public const string DownloadLink = "https://github.com/ddakebono/BTKSAGestureMod/releases";
     }
 
@@ -47,7 +48,7 @@ namespace BTKSAGestureMod
             MelonPrefs.RegisterBool(settingsCategory, leftHandActionDisable, false, "Disable Left Action Menu");
 
             //Only initialize for VR users
-            if (!VRCTrackingManager.prop_Boolean_0)
+            if (XRDevice.isPresent)
             {
                 //Initalize Harmony
                 harmony = HarmonyInstance.Create("BTKStandaloneGM");
