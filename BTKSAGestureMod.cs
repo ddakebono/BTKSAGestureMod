@@ -11,7 +11,7 @@ namespace BTKSAGestureMod
         public const string Name = "BTKSAGestureMod";
         public const string Author = "DDAkebono#0001";
         public const string Company = "BTK-Development";
-        public const string Version = "1.1.2";
+        public const string Version = "1.1.3";
         public const string DownloadLink = "https://github.com/ddakebono/BTKSAGestureMod/releases";
     }
 
@@ -87,11 +87,11 @@ namespace BTKSAGestureMod
             {
                 if (__0)
                 {
-                    HandGestureController.Method_Public_Static_Void_Boolean_0(!HandGestureController.field_Private_Static_Boolean_0);
+                    HandGestureController.Method_Public_Static_Void_Boolean_PDM_0(!HandGestureController.field_Private_Static_Boolean_0);
                 }
                 else
                 {
-                    HandGestureController.Method_Public_Static_Void_Boolean_0(__0);
+                    HandGestureController.Method_Public_Static_Void_Boolean_PDM_0(__0);
                 }
                 return false; //Skip original function
 
