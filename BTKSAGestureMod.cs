@@ -1,6 +1,8 @@
 ﻿using Harmony;
 using MelonLoader;
+using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEngine.XR;
 
@@ -11,7 +13,7 @@ namespace BTKSAGestureMod
         public const string Name = "BTKSAGestureMod";
         public const string Author = "DDAkebono#0001";
         public const string Company = "BTK-Development";
-        public const string Version = "1.1.3";
+        public const string Version = "1.1.4";
         public const string DownloadLink = "https://github.com/ddakebono/BTKSAGestureMod/releases";
     }
 
@@ -33,11 +35,10 @@ namespace BTKSAGestureMod
 
             instance = this;
 
-            if (Directory.Exists("BTKCompanion"))
+            if (MelonHandler.Mods.Any(x => x.Info.Name.Equals("BTKCompanionLoader", StringComparison.OrdinalIgnoreCase)))
             {
-                MelonLogger.Log("Woah, hold on a sec, it seems you might be running BTKCompanion, if this is true GestureMod is built into that, and you should not be using this!");
-                MelonLogger.Log("If you are not currently using BTKCompanion please remove the BTKCompanion folder from your VRChat installation!");
-                MelonLogger.LogError("Gesture Mod has not started up! (BTKCompanion Exists)");
+                MelonLogger.Log("Hold on a sec! Looks like you've got BTKCompanion installed, this mod is built in and not needed!");
+                MelonLogger.LogError("BTKSAGestureMod has not started up! (BTKCompanion Running)");
                 return;
             }
 
@@ -85,9 +86,10 @@ namespace BTKSAGestureMod
             //MelonLogger.Log($"ActionMenuOpener OpenActionMenu Called OpenerName: {__instance.name}, BoolState: {__0}");
             if ((MelonPrefs.GetBool(settingsCategory, rightHandSetting) && __instance.name.Equals("MenuR")) || (MelonPrefs.GetBool(settingsCategory, leftHandSetting) && __instance.name.Equals("MenuL")))
             {
+
                 if (__0)
                 {
-                    HandGestureController.Method_Public_Static_Void_Boolean_PDM_0(!HandGestureController.field_Private_Static_Boolean_0);
+                    HandGestureController.Method_Public_Static_Void_Boolean_PDM_0(!HandGestureController.Method_Public_Static_Boolean_0());
                 }
                 else
                 {
