@@ -13,7 +13,7 @@ namespace BTKSAGestureMod
         public const string Name = "BTKSAGestureMod";
         public const string Author = "DDAkebono#0001";
         public const string Company = "BTK-Development";
-        public const string Version = "1.1.5";
+        public const string Version = "1.1.6";
         public const string DownloadLink = "https://github.com/ddakebono/BTKSAGestureMod/releases";
     }
 
@@ -23,13 +23,27 @@ namespace BTKSAGestureMod
 
         public HarmonyInstance harmony;
 
+        public MethodInfo HandGestureCtrlMethod;
+
         public static string settingsCategory = "BTKSAGestureMod";
         public static string rightHandSetting = "righthand";
         public static string leftHandSetting = "lefthand";
         public static string leftHandActionDisable = "lefthandactiondisable";
         public static string rightHandActionDisable = "righthandactiondisable";
 
-        public override void VRChat_OnUiManagerInit()
+        int scenesLoaded = 0;
+
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+        {
+            if (scenesLoaded <= 2)
+            {
+                scenesLoaded++;
+                if (scenesLoaded == 2)
+                    UiManagerInit();
+            }
+        }
+
+        public void UiManagerInit()
         {
             MelonLogger.Msg("BTK Standalone: Gesture Mod - Starting up");
 
@@ -66,6 +80,11 @@ namespace BTKSAGestureMod
                     }
                 }
 
+                HandGestureCtrlMethod = typeof(HandGestureController).GetMethods(BindingFlags.Static | BindingFlags.Public).FirstOrDefault(x => x.Name.Contains("Method_Public_Static_Void_Boolean_"));
+                if (HandGestureCtrlMethod == null)
+                    MelonLogger.Error("Could not find required method in HandGestureController! GestureMod will not function.");
+
+
                 MelonLogger.Msg($"Found {patchCount} matching methods in ActionMenuOpener.");
             }
             else
@@ -82,17 +101,16 @@ namespace BTKSAGestureMod
         /// <param name="__instance">Instance of ActionMenuOpener __instance.name gives the MenuL or MenuR needed to determine hand</param>
         public static bool OnActionMenuOpen(bool __0, ref ActionMenuOpener __instance)
         {
-            //MelonLogger.Log($"ActionMenuOpener OpenActionMenu Called OpenerName: {__instance.name}, BoolState: {__0}");
-            if ((MelonPreferences.GetEntryValue<bool>(settingsCategory, rightHandSetting) && __instance.name.Equals("MenuR")) || (MelonPreferences.GetEntryValue<bool>(settingsCategory, leftHandSetting) && __instance.name.Equals("MenuL")))
+            if ((MelonPreferences.GetEntryValue<bool>(settingsCategory, rightHandSetting) && __instance.name.Equals("MenuR")) || (MelonPreferences.GetEntryValue<bool>(settingsCategory, leftHandSetting) && __instance.name.Equals("MenuL")) && instance.HandGestureCtrlMethod!=null)
             {
 
                 if (__0)
                 {
-                    HandGestureController.Method_Public_Static_Void_Boolean_0(!HandGestureController.Method_Public_Static_Boolean_0());
+                    instance.HandGestureCtrlMethod.Invoke(instance, new Object[] { !HandGestureController.Method_Public_Static_Boolean_0() });
                 }
                 else
                 {
-                    HandGestureController.Method_Public_Static_Void_Boolean_0(__0);
+                    instance.HandGestureCtrlMethod.Invoke(instance, new Object[] { __0 });
                 }
                 return false; //Skip original function
 
