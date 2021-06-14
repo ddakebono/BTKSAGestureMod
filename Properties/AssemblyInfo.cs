@@ -33,7 +33,7 @@ using MelonLoader;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.6")]
-[assembly: AssemblyFileVersion("1.1.6")]
+[assembly: AssemblyVersion("1.1.7")]
+[assembly: AssemblyFileVersion("1.1.7")]
 [assembly: MelonInfo(typeof(BTKSAGestureMod.BTKSAGestureMod), BTKSAGestureMod.BuildInfo.Name, BTKSAGestureMod.BuildInfo.Version, BTKSAGestureMod.BuildInfo.Author, BTKSAGestureMod.BuildInfo.DownloadLink)]
 [assembly: MelonGame("VRChat", "VRChat")]

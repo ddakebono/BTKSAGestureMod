@@ -1,9 +1,9 @@
-﻿using Harmony;
-using MelonLoader;
+﻿using MelonLoader;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using HarmonyLib;
 using UnityEngine.XR;
 
 namespace BTKSAGestureMod
@@ -13,17 +13,16 @@ namespace BTKSAGestureMod
         public const string Name = "BTKSAGestureMod";
         public const string Author = "DDAkebono#0001";
         public const string Company = "BTK-Development";
-        public const string Version = "1.1.6";
+        public const string Version = "1.1.7";
         public const string DownloadLink = "https://github.com/ddakebono/BTKSAGestureMod/releases";
     }
 
     public class BTKSAGestureMod : MelonMod
     {
-        public static BTKSAGestureMod instance;
-
-        public HarmonyInstance harmony;
+        public static BTKSAGestureMod Instance;
 
         public MethodInfo HandGestureCtrlMethod;
+        public bool IsGestureModReady;
 
         public static string settingsCategory = "BTKSAGestureMod";
         public static string rightHandSetting = "righthand";
@@ -35,19 +34,17 @@ namespace BTKSAGestureMod
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            if (scenesLoaded <= 2)
-            {
-                scenesLoaded++;
-                if (scenesLoaded == 2)
-                    UiManagerInit();
-            }
+            if (scenesLoaded > 2) return;
+            scenesLoaded++;
+            if (scenesLoaded == 2)
+                UiManagerInit();
         }
 
-        public void UiManagerInit()
+        private void UiManagerInit()
         {
             MelonLogger.Msg("BTK Standalone: Gesture Mod - Starting up");
 
-            instance = this;
+            Instance = this;
 
             if (MelonHandler.Mods.Any(x => x.Info.Name.Equals("BTKCompanionLoader", StringComparison.OrdinalIgnoreCase)))
             {
@@ -65,32 +62,25 @@ namespace BTKSAGestureMod
             //Only initialize for VR users
             if (XRDevice.isPresent)
             {
-                int patchCount = 0;
-
-                //Initalize Harmony
-                harmony = HarmonyInstance.Create("BTKStandaloneGM");
-
-                //Setup hooks on matching methods in ActionMenuOpener
-                foreach(MethodInfo method in typeof(ActionMenuOpener).GetMethods(BindingFlags.Public | BindingFlags.Instance))
-                {
-                    if (method.Name.Contains("Method_Public_Void_Boolean"))
-                    {
-                        patchCount++;
-                        harmony.Patch(method, new HarmonyMethod(typeof(BTKSAGestureMod).GetMethod("OnActionMenuOpen", BindingFlags.Static | BindingFlags.Public)));
-                    }
-                }
-
                 HandGestureCtrlMethod = typeof(HandGestureController).GetMethods(BindingFlags.Static | BindingFlags.Public).FirstOrDefault(x => x.Name.Contains("Method_Public_Static_Void_Boolean_"));
                 if (HandGestureCtrlMethod == null)
                     MelonLogger.Error("Could not find required method in HandGestureController! GestureMod will not function.");
 
-
-                MelonLogger.Msg($"Found {patchCount} matching methods in ActionMenuOpener.");
+                IsGestureModReady = true;
             }
             else
             {
                 MelonLogger.Msg("Desktop Mode Detected, Gesture Mod has not started up!");
             }
+        }
+    }
+    
+    [HarmonyPatch]
+    class ActionMenuPatches 
+    {
+        static IEnumerable<MethodBase> TargetMethods()
+        {
+            return typeof(ActionMenuOpener).GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(x => x.Name.Contains("Method_Public_Void_Boolean")).Cast<MethodBase>();
         }
 
         /// <summary>
@@ -99,25 +89,36 @@ namespace BTKSAGestureMod
         /// </summary>
         /// <param name="__0">Target state for the ActionMenu, either open or close</param>
         /// <param name="__instance">Instance of ActionMenuOpener __instance.name gives the MenuL or MenuR needed to determine hand</param>
-        public static bool OnActionMenuOpen(bool __0, ref ActionMenuOpener __instance)
+        static bool Prefix(bool __0, ref ActionMenuOpener __instance)
         {
-            if ((MelonPreferences.GetEntryValue<bool>(settingsCategory, rightHandSetting) && __instance.name.Equals("MenuR")) || (MelonPreferences.GetEntryValue<bool>(settingsCategory, leftHandSetting) && __instance.name.Equals("MenuL")) && instance.HandGestureCtrlMethod!=null)
+            if (!BTKSAGestureMod.Instance.IsGestureModReady) return true;
+            
+            if ((MelonPreferences.GetEntryValue<bool>(BTKSAGestureMod.settingsCategory, BTKSAGestureMod.rightHandSetting) &&
+                 __instance.name.Equals("MenuR")) ||
+                (MelonPreferences.GetEntryValue<bool>(BTKSAGestureMod.settingsCategory, BTKSAGestureMod.leftHandSetting) &&
+                 __instance.name.Equals("MenuL")) && BTKSAGestureMod.Instance.HandGestureCtrlMethod != null)
             {
 
                 if (__0)
                 {
-                    instance.HandGestureCtrlMethod.Invoke(instance, new Object[] { !HandGestureController.Method_Public_Static_Boolean_0() });
+                    BTKSAGestureMod.Instance.HandGestureCtrlMethod.Invoke(BTKSAGestureMod.Instance,
+                        new Object[] {!HandGestureController.Method_Public_Static_Boolean_0()});
                 }
                 else
                 {
-                    instance.HandGestureCtrlMethod.Invoke(instance, new Object[] { __0 });
+                    BTKSAGestureMod.Instance.HandGestureCtrlMethod.Invoke(BTKSAGestureMod.Instance,
+                        new Object[] {__0});
                 }
+
                 return false; //Skip original function
 
             }
 
             //Check if action menu is disabled for hand
-            if ((MelonPreferences.GetEntryValue<bool>(settingsCategory, rightHandActionDisable) && __instance.name.Equals("MenuR")) || (MelonPreferences.GetEntryValue<bool>(settingsCategory, leftHandActionDisable) && __instance.name.Equals("MenuL")))
+            if ((MelonPreferences.GetEntryValue<bool>(BTKSAGestureMod.settingsCategory, BTKSAGestureMod.rightHandActionDisable) &&
+                 __instance.name.Equals("MenuR")) ||
+                (MelonPreferences.GetEntryValue<bool>(BTKSAGestureMod.settingsCategory, BTKSAGestureMod.leftHandActionDisable) &&
+                 __instance.name.Equals("MenuL")))
                 return false;
 
             return true;
