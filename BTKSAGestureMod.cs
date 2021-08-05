@@ -13,7 +13,7 @@ namespace BTKSAGestureMod
         public const string Name = "BTKSAGestureMod";
         public const string Author = "DDAkebono#0001";
         public const string Company = "BTK-Development";
-        public const string Version = "1.1.7";
+        public const string Version = "1.1.8";
         public const string DownloadLink = "https://github.com/ddakebono/BTKSAGestureMod/releases";
     }
 
@@ -60,7 +60,7 @@ namespace BTKSAGestureMod
             MelonPreferences.CreateEntry<bool>(settingsCategory, leftHandActionDisable, false, "Disable Left Action Menu");
 
             //Only initialize for VR users
-            if (XRDevice.isPresent)
+            if (true)//XRDevice.isPresent)
             {
                 HandGestureCtrlMethod = typeof(HandGestureController).GetMethods(BindingFlags.Static | BindingFlags.Public).FirstOrDefault(x => x.Name.Contains("Method_Public_Static_Void_Boolean_"));
                 if (HandGestureCtrlMethod == null)
@@ -102,7 +102,7 @@ namespace BTKSAGestureMod
                 if (__0)
                 {
                     BTKSAGestureMod.Instance.HandGestureCtrlMethod.Invoke(BTKSAGestureMod.Instance,
-                        new Object[] {!HandGestureController.Method_Public_Static_Boolean_0()});
+                        new Object[] {!HandGestureController.Method_Public_Static_Boolean_PDM_0()});
                 }
                 else
                 {
