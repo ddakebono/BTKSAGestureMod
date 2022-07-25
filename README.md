@@ -1,3 +1,6 @@
+# THIS REPO IS NO LONGER SUPPORTED, VRCHAT'S DECISION TO ADOPT EASY ANTI CHEAT HAS KILLED ANY DESIRE TO CONTINUE.
+# UNLESS THIS DECISION IS REVERSED THIS REPO WILL REMAIN ARCHIVED.
+
 # BTKSAGestureMod
 BTK Standalone: Gesture Mod is a small mod to allow you to switch the ActionMenu button binds back into the Gesture Lock, like how it worked originally on the Index controllers.
 
